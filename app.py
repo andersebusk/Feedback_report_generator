@@ -7,9 +7,8 @@ import os  # ✅ Import os to use environment variables
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Fetch PDFGeneratorAPI token dynamically
 def get_pdfgenerator_token():
-    url = "https://us1.pdfgeneratorapi.com/api/v3/auth/access-token"
+    url = "https://eu1.pdfgeneratorapi.com/api/v3/auth/access-token"
     data = {
         "apiKey": os.environ.get("PDFGENERATOR_API_KEY"),
         "apiSecret": os.environ.get("PDFGENERATOR_API_SECRET")
@@ -74,7 +73,8 @@ def generate_pdf():
         "Content-Type": "application/json"
     }
 
-    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{os.environ.get('PDFGENERATOR_TEMPLATE_ID')}/output"
+    url = f"https://eu1.pdfgeneratorapi.com/api/v3/templates/{os.environ.get('PDFGENERATOR_TEMPLATE_ID')}/output"
+
 
     response = requests.post(url, headers=headers, json=payload)
 
