@@ -1,22 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pandas as pd
 import requests
+import os  # ✅ Import os to use environment variables
 
 app = Flask(__name__)
 CORS(app)
 
-API_TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIwZDVhM2Y3YWM0OWVmNDNkODA5MTVlZGZjYjJmYzViMGRiODgzMmU1OGE3NWQyMTU3NTJiMjYwMTlkYjA2ZGE3Iiwic3ViIjoiYW5kZXJzLmJ1c2tAbWFyaW5lZmx1aWQuZGsiLCJleHAiOjE3NTE5ODE5MzJ9.HRRuY6LKD8DbWCnwhD1ZBtQVkWfTKF2S90lWYuCeJoA"
-TEMPLATE_ID = "1450370"
+# ✅ Fetch PDFGeneratorAPI token dynamically
+def get_pdfgenerator_token():
+    url = "https://us1.pdfgeneratorapi.com/api/v4/auth/access-token"
+    data = {
+        "apiKey": os.environ.get("PDFGENERATOR_API_KEY"),
+        "apiSecret": os.environ.get("PDFGENERATOR_API_SECRET")
+    }
+    response = requests.post(url, json=data)
+    response.raise_for_status()
+    return response.json()["response"]
 
-# Load Excel data on startup
+TEMPLATE_ID = os.environ.get("PDFGENERATOR_TEMPLATE_ID")
+
+# ✅ Load Excel data on startup
 excel_file = 'Legacy data vessels.xlsx'
-df = pd.read_excel(excel_file)
-
-# Replace NaN with empty strings
-df = df.fillna('')
-
-# Convert to list of dicts
+df = pd.read_excel(excel_file).fillna('')  # Replace NaN with empty strings
 vessel_data = df.to_dict(orient='records')
 
 @app.route('/vessels', methods=['GET'])
@@ -26,6 +32,9 @@ def get_vessels():
 @app.route('/generate-pdf', methods=['POST'])
 def generate_pdf():
     user_data = request.json
+
+    # ✅ Fetch fresh API token before calling PDFGeneratorAPI
+    API_TOKEN = get_pdfgenerator_token()
 
     payload = {
         "template": {
@@ -70,6 +79,11 @@ def generate_pdf():
 
     result = response.json()
     return jsonify({"pdfUrl": result.get("response")})
+
+# ✅ Serve index.html from root for frontend access
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
