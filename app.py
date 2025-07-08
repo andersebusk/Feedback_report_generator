@@ -33,8 +33,11 @@ def get_vessels():
 def generate_pdf():
     user_data = request.json
 
-    # ✅ Fetch fresh API token before calling PDFGeneratorAPI
-    API_TOKEN = get_pdfgenerator_token()
+    try:
+        API_TOKEN = get_pdfgenerator_token()
+    except Exception as e:
+        print("Error fetching PDFGeneratorAPI token:", e)
+        return jsonify({"error": "Authentication failed"}), 500
 
     payload = {
         "template": {
@@ -77,8 +80,15 @@ def generate_pdf():
     response = requests.post("https://us1.pdfgeneratorapi.com/api/v4/documents/generate",
                              headers=headers, json=payload)
 
-    result = response.json()
-    return jsonify({"pdfUrl": result.get("response")})
+    try:
+        response.raise_for_status()
+        result = response.json()
+        return jsonify({"pdfUrl": result.get("response")})
+    except Exception as e:
+        print("PDFGeneratorAPI error:", e)
+        print("Response status code:", response.status_code)
+        print("Response text:", response.text)
+        return jsonify({"error": "PDF generation failed"}), 500
 
 # ✅ Serve index.html from root for frontend access
 @app.route('/')
