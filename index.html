@@ -8,16 +8,27 @@
     form { display: flex; gap: 40px; flex-wrap: wrap; }
     .section { flex: 1 1 300px; max-width: 600px; }
     h2 { margin-top: 0; }
-    label { display: block; margin: 10px 0 4px; }
-    input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
-    button { margin-top: 20px; padding: 10px 20px; }
+    label { display: block; margin: 6px 0 4px; font-size: 0.9em; }
+    input, select, textarea { width: 100%; padding: 6px; box-sizing: border-box; }
+    button {
+        margin: -40px auto; /* auto left and right to center in its container */
+        padding: 10px 20px;
+        background-color: #A9D18E; /* set green background */
+        color: black; /* set text color for contrast */
+        border: none; /* remove default border for cleaner look */
+        border-radius: 4px; /* optional: slight rounding for aesthetics */
+        display: block; /* ensures margin auto works to center */
+        font-size: 1rem; /* consistent sizing */
+        cursor: pointer; /* changes cursor to pointer on hover */
+        }
+
   </style>
 </head>
 <body>
   <form id="pdfForm">
     <!-- Feedback report generator section -->
     <div class="section">
-      <h2>Feedback Report Generator</h2>
+      <h2>General information</h2>
       <label>Vessel Name:
         <input list="vessels" name="vessel_name" id="vesselInput" required>
         <datalist id="vessels"></datalist>
@@ -28,41 +39,55 @@
       <label>Engine Manufacturer:<input type="text" name="en_manu" id="en_manu" /></label>
       <label>Engine Model:<input type="text" name="en_mod" id="en_mod" /></label>
       <label>MCR Output:<input type="number" name="mcr_out" id="mcr_out" /></label>
-      <label>Filter Purifier:<input type="text" name="fil_pur" id="fil_pur" /></label>
+      <label>Filter/Purifier:<input type="text" name="fil_pur" id="fil_pur" /></label>
     </div>
 
     <!-- Report details section -->
     <div class="section">
-      <h2>Report Details</h2>
-      <label>Date Of Report:<input type="date" name="date" required /></label>
-      <label>Engineer Name:<input type="text" name="eng_name" required /></label>
-      <label>Report Result Status:
-        <select name="status" required>
-          <option value="">-- Select Status --</option>
-          <option value="Normal">Normal</option>
-          <option value="Abnormal">Abnormal</option>
-          <option value="Alert">Alert</option>
+        <h2>Report Details</h2>
+        <!-- existing report detail fields here except the last 3 -->
+        <label>Date Of Report:<input type="date" name="date" required /></label>
+        <label>Engineer Name:
+            <select name="eng_name" required>
+            <option value="">-- Select Engineer --</option>
+            <option value="SBO">Sebastian Bøge</option>
+            <option value="AJO">Andreas Johansen</option>
+            <option value="WBE">William Benn</option>
+            <option value="TAN">Thomas Andersen</option>
         </select>
-      </label>
-      <label>Sample Period:<input type="text" name="sample_per" /></label>
-      <label>Latest Onboard Sample Date:<input type="date" name="on_sample_date" /></label>
-      <label>Latest Laboratory Sample Date:<input type="date" name="lab_sample_date" /></label>
-      <label>Average Load In Sample Period [%]:<input type="number" name="avg_load" /></label>
-      <label>FO Sulphur Content [% m/m]:<input type="number" step="any" name="fo_sulph" /></label>
-      <label>CLO BN [mgKOH/g]:<input type="number" name="clo_bn" /></label>
-      <label>Avg. CLO Consumption / 24hrs [L]:<input type="number" name="clo_24hrs" /></label>
-      <label>ACC Factor:<input type="number" step="any" name="acc_fac" /></label>
-      <label>Feed-rate Before BOB:<input type="number" step="any" name="feed_before" /></label>
-      <label>Latest Feed-rate:<input type="number" step="any" name="feed_rep" /></label>
-      <label>Data Suggests:<textarea name="data_suggests"></textarea></label>
-      <label>We Note:<textarea name="we_note"></textarea></label>
-      <label>We Suggest:<textarea name="we_suggest"></textarea></label>
+        </label>
+        <label>Report Result Status:
+        <select name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="Normal">Normal</option>
+            <option value="Abnormal">Abnormal</option>
+            <option value="Alert">Alert</option>
+        </select>
+        </label>
+        <label>Sample Period:<input type="text" name="sample_per" /></label>
+        <label>Latest Onboard Sample Date:<input type="date" name="on_sample_date" /></label>
+        <label>Latest Laboratory Sample Date:<input type="date" name="lab_sample_date" /></label>
+        <label>Average Load In Sample Period [%]:<input type="number" name="avg_load" /></label>
+        <label>FO Sulphur Content [% m/m]:<input type="number" step="any" name="fo_sulph" /></label>
+        <label>CLO BN [mgKOH/g]:<input type="number" name="clo_bn" /></label>
+        <label>Avg. CLO Consumption / 24hrs [L]:<input type="number" name="clo_24hrs" /></label>
+        <label>ACC Factor:<input type="number" step="any" name="acc_fac" /></label>
+        <label>Feed-rate Before BOB:<input type="number" step="any" name="feed_before" /></label>
+        <label>Latest Feed-rate:<input type="number" step="any" name="feed_rep" /></label>
+    </div>
+
+    <!-- Report summary section -->
+    <div class="section">
+        <h2>Report Summary</h2>
+        <label>Data Suggests:<textarea name="data_suggests" style="min-height: 150px;"></textarea></label>
+        <label>We Note:<textarea name="we_note" style="min-height: 150px;"></textarea></label>
+        <label>We Suggest:<textarea name="we_suggest" style="min-height: 150px;"></textarea></label>
     </div>
 
     <div style="width: 100%;">
-      <button type="submit">Generate PDF</button>
+        <button type="submit">Generate PDF</button>
     </div>
-  </form>
+</form>
 
   <script>
     let vessels = [];
