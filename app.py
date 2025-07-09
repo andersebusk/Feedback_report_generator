@@ -9,7 +9,7 @@ CORS(app)
 
 # ✅ Fetch PDFGeneratorAPI token dynamically (v3)
 def get_pdfgenerator_token():
-    url = "https://eu1.pdfgeneratorapi.com/api/v3/auth/access-token"  # Change to us1 if needed
+    url = "https://us1.pdfgeneratorapi.com/api/v3/auth/access-token"  # Change to us1 if needed
     data = {
         "apiKey": os.environ.get("PDFGENERATOR_API_KEY"),
         "apiSecret": os.environ.get("PDFGENERATOR_API_SECRET")
@@ -74,7 +74,7 @@ def generate_pdf():
         "Content-Type": "application/json"
     }
 
-    url = f"https://eu1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}/output"  # Change eu1 to us1 if needed
+    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}/output"  # Change eu1 to us1 if needed
 
     response = requests.post(url, headers=headers, json=payload)
 
