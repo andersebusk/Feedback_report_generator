@@ -3,20 +3,26 @@ from flask_cors import CORS
 import pandas as pd
 import requests
 import os
+import jwt
+import time
 
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Fetch PDFGeneratorAPI token dynamically (v3)
-def get_pdfgenerator_token():
-    url = "https://us1.pdfgeneratorapi.com/api/v3/auth/access-token"  # Change to us1 if needed
-    data = {
-        "apiKey": os.environ.get("PDFGENERATOR_API_KEY"),
-        "apiSecret": os.environ.get("PDFGENERATOR_API_SECRET")
+# ✅ Generate JWT token for PDFGeneratorAPI authentication
+def get_pdfgenerator_jwt():
+    API_KEY = os.environ.get("PDFGENERATOR_API_KEY")
+    API_SECRET = os.environ.get("PDFGENERATOR_API_SECRET")
+    WORKSPACE_IDENTIFIER = os.environ.get("PDFGENERATOR_WORKSPACE_IDENTIFIER")  # usually your login email
+
+    payload = {
+        "iss": API_KEY,
+        "sub": WORKSPACE_IDENTIFIER,
+        "exp": int(time.time()) + 60  # token valid for 60 seconds
     }
-    response = requests.post(url, json=data)
-    response.raise_for_status()
-    return response.json()["response"]
+
+    token = jwt.encode(payload, API_SECRET, algorithm="HS256")
+    return token
 
 TEMPLATE_ID = os.environ.get("PDFGENERATOR_TEMPLATE_ID")
 
@@ -34,9 +40,9 @@ def generate_pdf():
     user_data = request.json
 
     try:
-        API_TOKEN = get_pdfgenerator_token()
+        API_TOKEN = get_pdfgenerator_jwt()
     except Exception as e:
-        print("Error fetching PDFGeneratorAPI token:", e)
+        print("Error generating JWT token:", e)
         return jsonify({"error": "Authentication failed"}), 500
 
     payload = {
@@ -74,7 +80,7 @@ def generate_pdf():
         "Content-Type": "application/json"
     }
 
-    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}/output"  # Change eu1 to us1 if needed
+    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}/output"
 
     response = requests.post(url, headers=headers, json=payload)
 
