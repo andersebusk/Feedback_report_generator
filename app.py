@@ -80,7 +80,7 @@ def generate_pdf():
         "Content-Type": "application/json"
     }
 
-    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}/output"
+    url = f"https://us1.pdfgeneratorapi.com/api/v3/templates/{TEMPLATE_ID}"
 
     response = requests.post(url, headers=headers, json=payload)
 
