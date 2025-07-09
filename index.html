@@ -21,6 +21,10 @@
         font-size: 1rem; /* consistent sizing */
         cursor: pointer; /* changes cursor to pointer on hover */
         }
+    input[type="file"] {
+    padding: 6px;
+    font-size: 0.95rem;
+    }
 
   </style>
 </head>
@@ -41,6 +45,25 @@
       <label>MCR Output:<input type="number" name="mcr_out" id="mcr_out" /></label>
       <label>Filter/Purifier:<input type="text" name="fil_pur" id="fil_pur" /></label>
     </div>
+    <div class="section">
+    <h2>Report Pictures</h2>
+
+    <label>Fe/TBN Zones:
+        <input type="file" name="fe_tbn_zones" accept="image/*" />
+    </label>
+
+    <label>TBN Fed to engine vs Res. TBN:
+        <input type="file" name="tbn_fed_vs_res" accept="image/*" />
+    </label>
+
+    <label>Fe total per cylinder & ME Load:
+        <input type="file" name="fe_total_per_cyl_me_load" accept="image/*" />
+    </label>
+
+    <label>Feedrate, load and Fe total:
+        <input type="file" name="feedrate_load_fe_total" accept="image/*" />
+    </label>
+    </div>
 
     <!-- Report details section -->
     <div class="section">
@@ -50,10 +73,10 @@
         <label>Engineer Name:
             <select name="eng_name" required>
             <option value="">-- Select Engineer --</option>
-            <option value="SBO">Sebastian Bøge</option>
-            <option value="AJO">Andreas Johansen</option>
-            <option value="WBE">William Benn</option>
-            <option value="TAN">Thomas Andersen</option>
+            <option value="Sebastian Bøge">Sebastian Bøge</option>
+            <option value="Andreas Johansen">Andreas Johansen</option>
+            <option value="William Stabell Benn">William Benn</option>
+            <option value="Thomas Andersen">Thomas Andersen</option>
         </select>
         </label>
         <label>Report Result Status:
