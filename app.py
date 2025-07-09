@@ -1,13 +1,36 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 import pandas as pd
 import requests
 import os
 import jwt
 import time
+from functools import wraps
 
 app = Flask(__name__)
 CORS(app)
+
+USERNAME = os.environ.get("APP_USERNAME", "myusername")
+PASSWORD = os.environ.get("APP_PASSWORD", "mypassword")
+
+def check_auth(username, password):
+    return username == USERNAME and password == PASSWORD
+
+def authenticate():
+    return Response(
+        'Could not verify your access.\n'
+        'You need to login with proper credentials.', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 # ✅ Generate JWT token for PDFGeneratorAPI authentication
 def get_pdfgenerator_jwt():
