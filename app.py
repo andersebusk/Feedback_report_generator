@@ -6,6 +6,7 @@ import os
 import jwt
 import time
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -62,6 +63,9 @@ def get_vessels():
 @app.route('/generate-pdf', methods=['POST'])
 @requires_auth
 def generate_pdf():
+    
+    today_str = datetime.today().strftime('%Y-%m-%d')
+
     user_data = request.json
 
     try:
@@ -100,7 +104,7 @@ def generate_pdf():
         },
         "format": "pdf",
         "output": "url",
-        "name": f"Report_{user_data.get('vessel_name').replace(' ', '_')}"
+        "name": f"{today_str}_Report_{user_data.get('vessel_name').replace(' ', '_')}"
     }
 
     headers = {
