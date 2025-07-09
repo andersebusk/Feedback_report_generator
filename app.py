@@ -10,8 +10,8 @@ from functools import wraps
 app = Flask(__name__)
 CORS(app)
 
-USERNAME = os.environ.get("APP_USERNAME", "myusername")
-PASSWORD = os.environ.get("APP_PASSWORD", "mypassword")
+USERNAME = os.environ.get("APP_USERNAME", "defaultusername")
+PASSWORD = os.environ.get("APP_PASSWORD", "defaultpassword")
 
 def check_auth(username, password):
     return username == USERNAME and password == PASSWORD
@@ -55,6 +55,7 @@ df = pd.read_excel(excel_file).fillna('')  # Replace NaN with empty strings
 vessel_data = df.to_dict(orient='records')
 
 @app.route('/vessels', methods=['GET'])
+@requires_auth
 def get_vessels():
     return jsonify(vessel_data)
 
