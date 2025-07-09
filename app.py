@@ -59,6 +59,7 @@ def get_vessels():
     return jsonify(vessel_data)
 
 @app.route('/generate-pdf', methods=['POST'])
+@requires_auth
 def generate_pdf():
     user_data = request.json
 
@@ -122,6 +123,7 @@ def generate_pdf():
 
 # ✅ Serve index.html from root for frontend access
 @app.route('/')
+@requires_auth
 def serve_index():
     return send_from_directory('.', 'index.html')
 
