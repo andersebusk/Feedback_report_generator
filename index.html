@@ -30,6 +30,15 @@
     .dropzone img {
       max-width: 100%;
     }
+    select {
+      margin-bottom: 5px;
+    }
+    textarea {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -115,33 +124,36 @@
       <h2>Report Summary</h2>
 
       <label>Residual BN observation:
-        <select name="res_bn_obs" required>
+        <select onchange="document.getElementById('res_bn_obs').value = this.value;">
           <option value="">-- Select Option --</option>
-          <option value="Good">Residual BN is within the normal range and aligns with OEM guidelines.</option>
-          <option value="Slightly high">Residual BN is slightly on the higher side, with average values around {bn} mgKOH/g, but still within OEM guiding values.</option>
-          <option value="Slightly low">Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.</option>
-          <option value="Very low">Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.</option>
+          <option value="Residual BN is within the normal range and aligns with OEM guidelines.">Residual BN is within the normal range and aligns with OEM guidelines.</option>
+          <option value="Residual BN is slightly on the higher side, with average values around {bn} mgKOH/g, but still within OEM guiding values.">Residual BN is slightly on the higher side, with average values around {bn} mgKOH/g, but still within OEM guiding values.</option>
+          <option value="Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.">Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.</option>
+          <option value="Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.">Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.</option>
         </select>
+        <textarea name="res_bn_obs" id="res_bn_obs" style="min-height: 100px;" required></textarea>
       </label>
 
       <label>Fe total observation:
-        <select name="fe_tot_obs" required>
+        <select onchange="document.getElementById('fe_tot_obs').value = this.value;">
           <option value="">-- Select Option --</option>
-          <option value="Good">Fe Total levels are within normal ranges, indicating low wear and stable operating conditions.</option>
-          <option value="Slightly high">Fe Total levels are slightly elevated but remain within acceptable limits.</option>
-          <option value="Slightly low">Fe Total levels are slightly below average but remain within the normal operational range.</option>
-          <option value="Not good">Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.</option>
+          <option value="Fe Total levels are within normal ranges, indicating low wear and stable operating conditions.">Fe Total levels are within normal ranges, indicating low wear and stable operating conditions.</option>
+          <option value="Fe Total levels are slightly elevated but remain within acceptable limits.">Fe Total levels are slightly elevated but remain within acceptable limits.</option>
+          <option value="Fe Total levels are slightly below average but remain within the normal operational range.">Fe Total levels are slightly below average but remain within the normal operational range.</option>
+          <option value="Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.">Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.</option>
         </select>
+        <textarea name="fe_tot_obs" id="fe_tot_obs" style="min-height: 100px;" required></textarea>
       </label>
 
       <label>Feedrate observation:
-        <select name="feed_obs" required>
+        <select onchange="document.getElementById('feed_obs').value = this.value;">
           <option value="">-- Select Option --</option>
-          <option value="Good">Cylinder oil feedrate is within the target range, indicating optimal lubrication.</option>
-          <option value="Slightly high">Cylinder oil feedrate is slightly elevated but remains within acceptable operational limits.</option>
-          <option value="Slightly low">Cylinder oil feedrate is slightly below the target range but remains acceptable.</option>
-          <option value="Not good high">Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.</option>
+          <option value="Cylinder oil feedrate is within the target range, indicating optimal lubrication.">Cylinder oil feedrate is within the target range, indicating optimal lubrication.</option>
+          <option value="Cylinder oil feedrate is slightly elevated but remains within acceptable operational limits.">Cylinder oil feedrate is slightly elevated but remains within acceptable operational limits.</option>
+          <option value="Cylinder oil feedrate is slightly below the target range but remains acceptable.">Cylinder oil feedrate is slightly below the target range but remains acceptable.</option>
+          <option value="Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.">Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.</option>
         </select>
+        <textarea name="feed_obs" id="feed_obs" style="min-height: 100px;" required></textarea>
       </label>
 
       <label>Additional comment:
@@ -149,17 +161,19 @@
       </label>
 
       <label>We suggest:
-      <select name="we_suggest" required>
-        <option value="">-- Select Recommendation --</option>
-        <option value="Maintain feedrate">Maintain the current cylinder oil feedrate as it is for now and continue monitoring Fe levels and residual BN.</option>
-        <option value="Reduce feedrate gradually">Suggest reducing cylinder oil feedrate in steps of 0.05 g/kWh, taking onboard scrape-down samples 24-48 hours after each adjustment to ensure wear rates and residual BN remain within acceptable limits.</option>
-        <option value="Await further data">Recommend keeping the feedrate unchanged until further Fe data or operational clarifications are available.</option>
-        <option value="Increase blended oil BN">Suggest maintaining the current feedrate but increasing the BN of the blended cylinder oil to improve residual BN levels.</option>
-        <option value="Use BOB system">Recommend using the BOB system to blend down to a lower BN and taking onboard scrape-down samples 24-48 hours after adjustment.</option>
-        <option value="Reduce feedrate with caution">If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.</option>
-        <option value="Evaluate feedrate reduction">Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.</option>
-      </select>
-    </label>
+        <select onchange="document.getElementById('we_suggest').value = this.value;">
+          <option value="">-- Select Recommendation --</option>
+          <option value="Maintain the current cylinder oil feedrate as it is for now and continue monitoring Fe levels and residual BN.">Maintain the current cylinder oil feedrate as it is for now and continue monitoring Fe levels and residual BN.</option>
+          <option value="Suggest reducing cylinder oil feedrate in steps of 0.05 g/kWh, taking onboard scrape-down samples 24-48 hours after each adjustment to ensure wear rates and residual BN remain within acceptable limits.">Suggest reducing cylinder oil feedrate in steps of 0.05 g/kWh, taking onboard scrape-down samples 24-48 hours after each adjustment to ensure wear rates and residual BN remain within acceptable limits.</option>
+          <option value="Recommend keeping the feedrate unchanged until further Fe data or operational clarifications are available.">Recommend keeping the feedrate unchanged until further Fe data or operational clarifications are available.</option>
+          <option value="Suggest maintaining the current feedrate but increasing the BN of the blended cylinder oil to improve residual BN levels.">Suggest maintaining the current feedrate but increasing the BN of the blended cylinder oil to improve residual BN levels.</option>
+          <option value="Recommend using the BOB system to blend down to a lower BN and taking onboard scrape-down samples 24-48 hours after adjustment.">Recommend using the BOB system to blend down to a lower BN and taking onboard scrape-down samples 24-48 hours after adjustment.</option>
+          <option value="If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.">If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.</option>
+          <option value="Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.">Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.</option>
+        </select>
+        <textarea name="we_suggest" id="we_suggest" style="min-height: 100px;" required></textarea>
+      </label>
+
       <label>Additional comments:
         <textarea name="add_com_sugg" style="min-height: 100px;"></textarea>
       </label>
