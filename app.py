@@ -58,8 +58,14 @@ df = pd.read_excel(excel_file).fillna('')
 vessel_data = df.to_dict(orient='records')
 
 # 🔷 S3 client setup
-s3_client = boto3.client('s3')
 BUCKET_NAME = 'feedbackreportimages'
+
+s3_client = boto3.client(
+    's3',
+    region_name=os.environ.get("AWS_DEFAULT_REGION", "eu-north-1"),
+    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
+)
 
 @app.route('/upload-image', methods=['POST'])
 @requires_auth
