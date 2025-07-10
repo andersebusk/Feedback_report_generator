@@ -12,6 +12,7 @@ import boto3
 app = Flask(__name__)
 CORS(app)
 
+# 🔑 Basic Auth setup
 USERNAME = os.environ.get("APP_USERNAME", "defaultusername")
 PASSWORD = os.environ.get("APP_PASSWORD", "defaultpassword")
 
@@ -34,17 +35,16 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-
-# ✅ Generate JWT token for PDFGeneratorAPI authentication
+# 🔑 JWT generation for PDFGeneratorAPI
 def get_pdfgenerator_jwt():
     API_KEY = os.environ.get("PDFGENERATOR_API_KEY")
     API_SECRET = os.environ.get("PDFGENERATOR_API_SECRET")
-    WORKSPACE_IDENTIFIER = os.environ.get("PDFGENERATOR_WORKSPACE_IDENTIFIER")  # usually your login email
+    WORKSPACE_IDENTIFIER = os.environ.get("PDFGENERATOR_WORKSPACE_IDENTIFIER")
 
     payload = {
         "iss": API_KEY,
         "sub": WORKSPACE_IDENTIFIER,
-        "exp": int(time.time()) + 60  # token valid for 60 seconds
+        "exp": int(time.time()) + 60  # valid 60 seconds
     }
 
     token = jwt.encode(payload, API_SECRET, algorithm="HS256")
@@ -54,14 +54,15 @@ TEMPLATE_ID = os.environ.get("PDFGENERATOR_TEMPLATE_ID")
 
 # ✅ Load Excel data on startup
 excel_file = 'Legacy data vessels.xlsx'
-df = pd.read_excel(excel_file).fillna('')  # Replace NaN with empty strings
+df = pd.read_excel(excel_file).fillna('')
 vessel_data = df.to_dict(orient='records')
 
+# 🔷 S3 client setup
 s3_client = boto3.client('s3')
-
 BUCKET_NAME = 'feedbackreportimages'
 
 @app.route('/upload-image', methods=['POST'])
+@requires_auth
 def upload_image():
     file = request.files['image']
 
@@ -69,17 +70,16 @@ def upload_image():
         return jsonify({'error': 'No file provided'}), 400
 
     try:
-        # Generate unique filename if desired
         filename = file.filename
+        print("Uploading to S3:", filename)
 
-        # Upload to S3
         s3_client.upload_fileobj(file, BUCKET_NAME, filename, ExtraArgs={'ContentType': file.content_type})
 
-        # Generate presigned URL valid for e.g. 7 days (604800 seconds)
         presigned_url = s3_client.generate_presigned_url('get_object',
             Params={'Bucket': BUCKET_NAME, 'Key': filename},
             ExpiresIn=604800)
 
+        print("Generated presigned URL:", presigned_url)
         return jsonify({'url': presigned_url})
 
     except Exception as e:
@@ -94,13 +94,14 @@ def get_vessels():
 @app.route('/generate-pdf', methods=['POST'])
 @requires_auth
 def generate_pdf():
-    
     today_str = datetime.today().strftime('%Y-%m-%d')
-
     user_data = request.json
+
+    print("Received user data:", user_data)  # 🔷 Debug user data
 
     try:
         API_TOKEN = get_pdfgenerator_jwt()
+        print("Generated PDFGeneratorAPI JWT")
     except Exception as e:
         print("Error generating JWT token:", e)
         return jsonify({"error": "Authentication failed"}), 500
@@ -145,6 +146,8 @@ def generate_pdf():
         "name": f"{today_str}_Report_{user_data.get('vessel_name').replace(' ', '_')}"
     }
 
+    print("Payload for PDFGeneratorAPI:", payload)  # 🔷 Debug payload
+
     headers = {
         "Authorization": f"Bearer {API_TOKEN}",
         "Content-Type": "application/json"
@@ -152,11 +155,11 @@ def generate_pdf():
 
     url = "https://us1.pdfgeneratorapi.com/api/v4/documents/generate"
 
-    response = requests.post(url, headers=headers, json=payload)
-
     try:
+        response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
         result = response.json()
+        print("PDF generated successfully. URL:", result.get("response"))
         return jsonify({"pdfUrl": result.get("response")})
     except Exception as e:
         print("PDFGeneratorAPI error:", e)
@@ -164,7 +167,6 @@ def generate_pdf():
         print("Response text:", response.text)
         return jsonify({"error": "PDF generation failed"}), 500
 
-# ✅ Serve index.html from root for frontend access
 @app.route('/')
 @requires_auth
 def serve_index():
