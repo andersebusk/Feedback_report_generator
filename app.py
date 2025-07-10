@@ -134,6 +134,10 @@ def generate_pdf():
                 "add_com_obs": user_data.get("add_com_obs"),
                 "we_suggest": user_data.get("we_suggest"),
                 "add_com_sugg": user_data.get("add_com_sugg"),
+                "fe_tbn_image_url": user_data.get("fe_tbn_image_url"),
+                "tbn_fed_image_url": user_data.get("tbn_fed_image_url"),
+                "fe_tot_load_image_url": user_data.get("fe_tot_load_image_url"),
+                "feedrate_load_fe_image_url": user_data.get("feedrate_load_fe_image_url"),
             }
         },
         "format": "pdf",
