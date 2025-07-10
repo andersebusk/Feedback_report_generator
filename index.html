@@ -113,9 +113,56 @@
     <!-- Report summary -->
     <div class="section">
       <h2>Report Summary</h2>
-      <label>Data Suggests:<textarea name="data_suggests" style="min-height: 150px;"></textarea></label>
-      <label>We Note:<textarea name="we_note" style="min-height: 150px;"></textarea></label>
-      <label>We Suggest:<textarea name="we_suggest" style="min-height: 150px;"></textarea></label>
+
+      <label>Residual BN observation:
+        <select name="res_bn_obs" required>
+          <option value="">-- Select Option --</option>
+          <option value="Good">Residual BN is within the normal range and aligns with OEM guidelines.</option>
+          <option value="Slightly high">Residual BN is slightly on the higher side, with average values around {bn} mgKOH/g, but still within OEM guiding values.</option>
+          <option value="Slightly low">Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.</option>
+          <option value="Very low">Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.</option>
+        </select>
+      </label>
+
+      <label>Fe total observation:
+        <select name="fe_tot_obs" required>
+          <option value="">-- Select Option --</option>
+          <option value="Good">Fe Total levels are within normal ranges, indicating low wear and stable operating conditions.</option>
+          <option value="Slightly high">Fe Total levels are slightly elevated but remain within acceptable limits.</option>
+          <option value="Slightly low">Fe Total levels are slightly below average but remain within the normal operational range.</option>
+          <option value="Not good">Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.</option>
+        </select>
+      </label>
+
+      <label>Feedrate observation:
+        <select name="feed_obs" required>
+          <option value="">-- Select Option --</option>
+          <option value="Good">Cylinder oil feedrate is within the target range, indicating optimal lubrication.</option>
+          <option value="Slightly high">Cylinder oil feedrate is slightly elevated but remains within acceptable operational limits.</option>
+          <option value="Slightly low">Cylinder oil feedrate is slightly below the target range but remains acceptable.</option>
+          <option value="Not good high">Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.</option>
+        </select>
+      </label>
+
+      <label>Additional comment:
+        <textarea name="add_com_obs" style="min-height: 100px;"></textarea>
+      </label>
+
+      <label>We suggest:
+      <select name="we_suggest" required>
+        <option value="">-- Select Recommendation --</option>
+        <option value="Maintain feedrate">Maintain the current cylinder oil feedrate as it is for now and continue monitoring Fe levels and residual BN.</option>
+        <option value="Reduce feedrate gradually">Suggest reducing cylinder oil feedrate in steps of 0.05 g/kWh, taking onboard scrape-down samples 24-48 hours after each adjustment to ensure wear rates and residual BN remain within acceptable limits.</option>
+        <option value="Await further data">Recommend keeping the feedrate unchanged until further Fe data or operational clarifications are available.</option>
+        <option value="Increase blended oil BN">Suggest maintaining the current feedrate but increasing the BN of the blended cylinder oil to improve residual BN levels.</option>
+        <option value="Use BOB system">Recommend using the BOB system to blend down to a lower BN and taking onboard scrape-down samples 24-48 hours after adjustment.</option>
+        <option value="Reduce feedrate with caution">If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.</option>
+        <option value="Evaluate feedrate reduction">Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.</option>
+      </select>
+    </label>
+      <label>Additional comments:
+        <textarea name="add_com_sugg" style="min-height: 100px;"></textarea>
+      </label>
     </div>
 
     <div style="width: 100%;">

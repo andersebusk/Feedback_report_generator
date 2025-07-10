@@ -97,9 +97,12 @@ def generate_pdf():
                 "acc_fac": user_data.get("acc_fac"),
                 "feed_before": user_data.get("feed_before"),
                 "feed_rep": user_data.get("feed_rep"),
-                "data_suggests": user_data.get("data_suggests"),
-                "we_note": user_data.get("we_note"),
-                "we_suggest": user_data.get("we_suggest")
+                "res_bn_obs": user_data.get("res_bn_obs"),
+                "fe_tot_obs": user_data.get("fe_tot_obs"),
+                "feed_obs": user_data.get("feed_obs"),
+                "add_com_obs": user_data.get("add_com_obs"),
+                "we_suggest": user_data.get("we_suggest"),
+                "add_com_sugg": user_data.get("add_com_sugg"),
             }
         },
         "format": "pdf",
