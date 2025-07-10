@@ -7,6 +7,7 @@ import jwt
 import time
 from functools import wraps
 from datetime import datetime
+import boto3
 
 app = Flask(__name__)
 CORS(app)
@@ -33,6 +34,7 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+
 # ✅ Generate JWT token for PDFGeneratorAPI authentication
 def get_pdfgenerator_jwt():
     API_KEY = os.environ.get("PDFGENERATOR_API_KEY")
@@ -54,6 +56,35 @@ TEMPLATE_ID = os.environ.get("PDFGENERATOR_TEMPLATE_ID")
 excel_file = 'Legacy data vessels.xlsx'
 df = pd.read_excel(excel_file).fillna('')  # Replace NaN with empty strings
 vessel_data = df.to_dict(orient='records')
+
+s3_client = boto3.client('s3')
+
+BUCKET_NAME = 'feedbackreportimages'
+
+@app.route('/upload-image', methods=['POST'])
+def upload_image():
+    file = request.files['image']
+
+    if not file:
+        return jsonify({'error': 'No file provided'}), 400
+
+    try:
+        # Generate unique filename if desired
+        filename = file.filename
+
+        # Upload to S3
+        s3_client.upload_fileobj(file, BUCKET_NAME, filename, ExtraArgs={'ContentType': file.content_type})
+
+        # Generate presigned URL valid for e.g. 7 days (604800 seconds)
+        presigned_url = s3_client.generate_presigned_url('get_object',
+            Params={'Bucket': BUCKET_NAME, 'Key': filename},
+            ExpiresIn=604800)
+
+        return jsonify({'url': presigned_url})
+
+    except Exception as e:
+        print("S3 upload error:", e)
+        return jsonify({'error': 'Upload failed'}), 500
 
 @app.route('/vessels', methods=['GET'])
 @requires_auth

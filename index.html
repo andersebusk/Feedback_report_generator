@@ -231,7 +231,7 @@
         processItems(items);
       }
 
-      function processItems(items) {
+      async function processItems(items) {
         for (let i = 0; i < items.length; i++) {
           if (items[i].type.indexOf('image') !== -1) {
             const file = items[i].getAsFile();
@@ -261,10 +261,24 @@
             dropzone.appendChild(img);
             dropzone.appendChild(removeBtn);
 
-            // TODO: upload file to backend here and set hiddenInput.value to returned URL
-            console.log("Image received for", field, file);
+            // ✅ Upload file to backend S3 endpoint
+            const s3Upload = new FormData();
+            s3Upload.append('image', file);
 
-            break;
+            const uploadResponse = await fetch('/upload-image', {
+              method: 'POST',
+              body: s3Upload
+            });
+
+            const uploadResult = await uploadResponse.json();
+
+            if (uploadResult.url) {
+              hiddenInput.value = uploadResult.url;
+            } else {
+              alert('Image upload failed');
+            }
+
+            break; // exit after first image processed
           }
         }
       }
