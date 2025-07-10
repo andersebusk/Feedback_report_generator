@@ -11,33 +11,36 @@
     label { display: block; margin: 6px 0 4px; font-size: 0.9em; }
     input, select, textarea { width: 100%; padding: 6px; box-sizing: border-box; }
     button {
-        margin: -40px auto; /* auto left and right to center in its container */
+        margin: -40px auto;
         padding: 10px 20px;
-        background-color: #A9D18E; /* set green background */
-        color: black; /* set text color for contrast */
-        border: none; /* remove default border for cleaner look */
-        border-radius: 4px; /* optional: slight rounding for aesthetics */
-        display: block; /* ensures margin auto works to center */
-        font-size: 1rem; /* consistent sizing */
-        cursor: pointer; /* changes cursor to pointer on hover */
-        }
-    input[type="file"] {
-    padding: 6px;
-    font-size: 0.95rem;
+        background-color: #A9D18E;
+        color: black;
+        border: none;
+        border-radius: 4px;
+        display: block;
+        font-size: 1rem;
+        cursor: pointer;
     }
-
+    .dropzone {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .dropzone img {
+      max-width: 100%;
+    }
   </style>
 </head>
 <body>
   <form id="pdfForm">
-    <!-- Feedback report generator section -->
+    <!-- General information -->
     <div class="section">
       <h2>General information</h2>
       <label>Vessel Name:
         <input list="vessels" name="vessel_name" id="vesselInput" required>
         <datalist id="vessels"></datalist>
-    </label>
-
+      </label>
       <label>Shipowner:<input type="text" name="customer" id="customer" required /></label>
       <label>IMO Number:<input type="number" name="imo_no" id="imo_no" required /></label>
       <label>Engine Manufacturer:<input type="text" name="en_manu" id="en_manu" /></label>
@@ -45,109 +48,168 @@
       <label>MCR Output:<input type="number" name="mcr_out" id="mcr_out" /></label>
       <label>Filter/Purifier:<input type="text" name="fil_pur" id="fil_pur" /></label>
     </div>
+
+    <!-- Report Pictures -->
     <div class="section">
-    <h2>Report Pictures</h2>
+      <h2>Report Pictures</h2>
+      <div style="background-color: #f0f8ff; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+        <strong>Tip:</strong> To insert a screenshot:<br>
+        1. Take a screenshot using <kbd>Windows + Shift + S</kbd>.<br>
+        2. Click on the desired drop area below.<br>
+        3. Press <kbd>Ctrl + V</kbd> to paste directly.
+      </div>
 
-    <label>Fe/TBN Zones:
-        <input type="file" name="fe_tbn" accept="image/*" />
-    </label>
+      <!-- Dropzones for each image -->
+      <label>Fe/TBN Zones:</label>
+      <div id="fe_tbn_dropzone" class="dropzone">Paste or drop image here</div>
+      <input type="hidden" name="fe_tbn_image_url" id="fe_tbn_image_url">
 
-    <label>TBN Fed to engine vs Res. TBN:
-        <input type="file" name="tbn_fed" accept="image/*" />
-    </label>
+      <label>TBN Fed to engine vs Res. TBN:</label>
+      <div id="tbn_fed_dropzone" class="dropzone">Paste or drop image here</div>
+      <input type="hidden" name="tbn_fed_image_url" id="tbn_fed_image_url">
 
-    <label>Fe total per cylinder & ME Load:
-        <input type="file" name="fe_tot_load" accept="image/*" />
-    </label>
+      <label>Fe total per cylinder & ME Load:</label>
+      <div id="fe_tot_load_dropzone" class="dropzone">Paste or drop image here</div>
+      <input type="hidden" name="fe_tot_load_image_url" id="fe_tot_load_image_url">
 
-    <label>Feedrate, load and Fe total:
-        <input type="file" name="feedrate_load_fe" accept="image/*" />
-    </label>
+      <label>Feedrate, load and Fe total:</label>
+      <div id="feedrate_load_fe_dropzone" class="dropzone">Paste or drop image here</div>
+      <input type="hidden" name="feedrate_load_fe_image_url" id="feedrate_load_fe_image_url">
     </div>
 
-    <!-- Report details section -->
+    <!-- Report Details -->
     <div class="section">
-        <h2>Report Details</h2>
-        <!-- existing report detail fields here except the last 3 -->
-        <label>Date Of Report:<input type="date" name="date" required /></label>
-        <label>Engineer Name:
-            <select name="eng_name" required>
-            <option value="">-- Select Engineer --</option>
-            <option value="Sebastian Bøge">Sebastian Bøge</option>
-            <option value="Andreas Johansen">Andreas Johansen</option>
-            <option value="William Stabell Benn">William Benn</option>
-            <option value="Thomas Andersen">Thomas Andersen</option>
+      <h2>Report Details</h2>
+      <label>Date Of Report:<input type="date" name="date" required /></label>
+      <label>Engineer Name:
+        <select name="eng_name" required>
+          <option value="">-- Select Engineer --</option>
+          <option value="Sebastian Bøge">Sebastian Bøge</option>
+          <option value="Andreas Johansen">Andreas Johansen</option>
+          <option value="William Stabell Benn">William Benn</option>
+          <option value="Thomas Andersen">Thomas Andersen</option>
         </select>
-        </label>
-        <label>Report Result Status:
+      </label>
+      <label>Report Result Status:
         <select name="status" required>
-            <option value="">-- Select Status --</option>
-            <option value="Normal">Normal</option>
-            <option value="Abnormal">Abnormal</option>
-            <option value="Alert">Alert</option>
+          <option value="">-- Select Status --</option>
+          <option value="Normal">Normal</option>
+          <option value="Abnormal">Abnormal</option>
+          <option value="Alert">Alert</option>
         </select>
-        </label>
-        <label>Sample Period:<input type="text" name="sample_per" /></label>
-        <label>Latest Onboard Sample Date:<input type="date" name="on_sample_date" /></label>
-        <label>Latest Laboratory Sample Date:<input type="date" name="lab_sample_date" /></label>
-        <label>Average Load In Sample Period [%]:<input type="number" name="avg_load" /></label>
-        <label>FO Sulphur Content [% m/m]:<input type="number" step="any" name="fo_sulph" /></label>
-        <label>CLO BN [mgKOH/g]:<input type="number" name="clo_bn" /></label>
-        <label>Avg. CLO Consumption / 24hrs [L]:<input type="number" name="clo_24hrs" /></label>
-        <label>ACC Factor:<input type="number" step="any" name="acc_fac" /></label>
-        <label>Feed-rate Before BOB:<input type="number" step="any" name="feed_before" /></label>
-        <label>Latest Feed-rate:<input type="number" step="any" name="feed_rep" /></label>
+      </label>
+      <label>Sample Period:<input type="text" name="sample_per" /></label>
+      <label>Latest Onboard Sample Date:<input type="date" name="on_sample_date" /></label>
+      <label>Latest Laboratory Sample Date:<input type="date" name="lab_sample_date" /></label>
+      <label>Average Load In Sample Period [%]:<input type="number" name="avg_load" /></label>
+      <label>FO Sulphur Content [% m/m]:<input type="number" step="any" name="fo_sulph" /></label>
+      <label>CLO BN [mgKOH/g]:<input type="number" name="clo_bn" /></label>
+      <label>Avg. CLO Consumption / 24hrs [L]:<input type="number" name="clo_24hrs" /></label>
+      <label>ACC Factor:<input type="number" step="any" name="acc_fac" /></label>
+      <label>Feed-rate Before BOB:<input type="number" step="any" name="feed_before" /></label>
+      <label>Latest Feed-rate:<input type="number" step="any" name="feed_rep" /></label>
     </div>
 
-    <!-- Report summary section -->
+    <!-- Report summary -->
     <div class="section">
-        <h2>Report Summary</h2>
-        <label>Data Suggests:<textarea name="data_suggests" style="min-height: 150px;"></textarea></label>
-        <label>We Note:<textarea name="we_note" style="min-height: 150px;"></textarea></label>
-        <label>We Suggest:<textarea name="we_suggest" style="min-height: 150px;"></textarea></label>
+      <h2>Report Summary</h2>
+      <label>Data Suggests:<textarea name="data_suggests" style="min-height: 150px;"></textarea></label>
+      <label>We Note:<textarea name="we_note" style="min-height: 150px;"></textarea></label>
+      <label>We Suggest:<textarea name="we_suggest" style="min-height: 150px;"></textarea></label>
     </div>
 
     <div style="width: 100%;">
-        <button type="submit">Generate PDF</button>
+      <button type="submit">Generate PDF</button>
     </div>
-</form>
+  </form>
 
   <script>
     let vessels = [];
 
     async function loadVessels() {
-    const res = await fetch('/vessels');;
-    vessels = await res.json();
+      const res = await fetch('/vessels');
+      vessels = await res.json();
 
-    const dataList = document.getElementById('vessels');
-    vessels.forEach(v => {
+      const dataList = document.getElementById('vessels');
+      vessels.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v.vessel_name;
         dataList.appendChild(opt);
-    });
-}
-
-    document.getElementById('vesselInput').addEventListener('input', function() {
-    const selected = vessels.find(v => v.vessel_name === this.value);
-
-    if (selected) {
-        document.getElementById('customer').value = selected.customer || '';
-        document.getElementById('imo_no').value = selected.imo_no || '';
-        document.getElementById('en_manu').value = selected.en_manu || '';
-        document.getElementById('en_mod').value = selected.en_mod || '';
-        document.getElementById('mcr_out').value = selected.mcr_out || '';
-        document.getElementById('fil_pur').value = selected.fil_pur || '';
-    } else {
-        // Clear fields if no match
-        document.getElementById('customer').value = '';
-        document.getElementById('imo_no').value = '';
-        document.getElementById('en_manu').value = '';
-        document.getElementById('en_mod').value = '';
-        document.getElementById('mcr_out').value = '';
-        document.getElementById('fil_pur').value = '';
+      });
     }
+
+    // Handle vessel autofill
+    document.getElementById('vesselInput').addEventListener('input', function() {
+      const selected = vessels.find(v => v.vessel_name === this.value);
+
+      document.getElementById('customer').value = selected?.customer || '';
+      document.getElementById('imo_no').value = selected?.imo_no || '';
+      document.getElementById('en_manu').value = selected?.en_manu || '';
+      document.getElementById('en_mod').value = selected?.en_mod || '';
+      document.getElementById('mcr_out').value = selected?.mcr_out || '';
+      document.getElementById('fil_pur').value = selected?.fil_pur || '';
     });
 
+    // Drop/paste image handling
+    ['fe_tbn', 'tbn_fed', 'fe_tot_load', 'feedrate_load_fe'].forEach(field => {
+      const dropzone = document.getElementById(`${field}_dropzone`);
+      const hiddenInput = document.getElementById(`${field}_image_url`);
+
+      dropzone.addEventListener('paste', handlePaste);
+      dropzone.addEventListener('drop', handleDrop);
+      dropzone.addEventListener('dragover', e => e.preventDefault());
+
+      function handlePaste(e) {
+        const items = e.clipboardData.items;
+        processItems(items);
+      }
+
+      function handleDrop(e) {
+        e.preventDefault();
+        const items = e.dataTransfer.items;
+        processItems(items);
+      }
+
+      function processItems(items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = "100%";
+
+            // Create remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = 'Remove';
+            removeBtn.style.display = 'block';
+            removeBtn.style.margin = '10px auto';
+            removeBtn.style.background = '#f44336';
+            removeBtn.style.color = 'white';
+            removeBtn.style.border = 'none';
+            removeBtn.style.padding = '6px 12px';
+            removeBtn.style.borderRadius = '4px';
+            removeBtn.style.cursor = 'pointer';
+
+            removeBtn.addEventListener('click', () => {
+              dropzone.innerHTML = 'Paste or drop image here';
+              hiddenInput.value = '';
+            });
+
+            dropzone.innerHTML = '';
+            dropzone.appendChild(img);
+            dropzone.appendChild(removeBtn);
+
+            // TODO: upload file to backend here and set hiddenInput.value to returned URL
+            console.log("Image received for", field, file);
+
+            break;
+          }
+        }
+      }
+    });
+
+    // Submit form
     document.getElementById('pdfForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -157,15 +219,11 @@
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
-        });
+      });
 
       const result = await response.json();
-
-      if (result.pdfUrl) {
-        window.open(result.pdfUrl, '_blank');
-      } else {
-        alert('Error generating PDF');
-      }
+      if (result.pdfUrl) window.open(result.pdfUrl, '_blank');
+      else alert('Error generating PDF');
     });
 
     loadVessels();
