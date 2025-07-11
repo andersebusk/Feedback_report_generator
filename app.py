@@ -6,7 +6,7 @@ import os
 import jwt
 import time
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timezone
 import boto3
 
 app = Flask(__name__)
@@ -76,7 +76,8 @@ def upload_image():
         return jsonify({'error': 'No file provided'}), 400
 
     try:
-        filename = file.filename
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
+        filename = f"{timestamp}_{file.filename}"
         print("Uploading to S3:", filename)
 
         s3_client.upload_fileobj(file, BUCKET_NAME, filename, ExtraArgs={'ContentType': file.content_type})
