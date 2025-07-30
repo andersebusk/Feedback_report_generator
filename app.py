@@ -125,6 +125,7 @@ def generate_pdf():
                 "status": user_data.get("status"),
                 "en_manu": user_data.get("en_manu"),
                 "en_mod": user_data.get("en_mod"),
+                "mcr_out": user_data.get("mcr_out"),
                 "sample_per": user_data.get("sample_per"),
                 "on_sample_date": user_data.get("on_sample_date"),
                 "lab_sample_date": user_data.get("lab_sample_date"),
