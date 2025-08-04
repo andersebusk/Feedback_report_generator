@@ -6,11 +6,13 @@ import os
 import jwt
 import time
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timezone
+import boto3
 
 app = Flask(__name__)
 CORS(app)
 
+# 🔑 Basic Auth setup
 USERNAME = os.environ.get("APP_USERNAME", "defaultusername")
 PASSWORD = os.environ.get("APP_PASSWORD", "defaultpassword")
 
@@ -33,16 +35,16 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-# ✅ Generate JWT token for PDFGeneratorAPI authentication
+# 🔑 JWT generation for PDFGeneratorAPI
 def get_pdfgenerator_jwt():
     API_KEY = os.environ.get("PDFGENERATOR_API_KEY")
     API_SECRET = os.environ.get("PDFGENERATOR_API_SECRET")
-    WORKSPACE_IDENTIFIER = os.environ.get("PDFGENERATOR_WORKSPACE_IDENTIFIER")  # usually your login email
+    WORKSPACE_IDENTIFIER = os.environ.get("PDFGENERATOR_WORKSPACE_IDENTIFIER")
 
     payload = {
         "iss": API_KEY,
         "sub": WORKSPACE_IDENTIFIER,
-        "exp": int(time.time()) + 60  # token valid for 60 seconds
+        "exp": int(time.time()) + 60  # valid 60 seconds
     }
 
     token = jwt.encode(payload, API_SECRET, algorithm="HS256")
@@ -52,8 +54,44 @@ TEMPLATE_ID = os.environ.get("PDFGENERATOR_TEMPLATE_ID")
 
 # ✅ Load Excel data on startup
 excel_file = 'Legacy data vessels.xlsx'
-df = pd.read_excel(excel_file).fillna('')  # Replace NaN with empty strings
+df = pd.read_excel(excel_file).fillna('')
 vessel_data = df.to_dict(orient='records')
+
+# 🔷 S3 client setup
+BUCKET_NAME = 'feedbackreportimages'
+
+s3_client = boto3.client(
+    's3',
+    region_name="eu-north-1",
+    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
+)
+
+@app.route('/upload-image', methods=['POST'])
+@requires_auth
+def upload_image():
+    file = request.files['image']
+
+    if not file:
+        return jsonify({'error': 'No file provided'}), 400
+
+    try:
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
+        filename = f"{timestamp}_{file.filename}"
+        print("Uploading to S3:", filename)
+
+        s3_client.upload_fileobj(file, BUCKET_NAME, filename, ExtraArgs={'ContentType': file.content_type})
+
+        presigned_url = s3_client.generate_presigned_url('get_object',
+            Params={'Bucket': BUCKET_NAME, 'Key': filename},
+            ExpiresIn=604800)
+
+        print("Generated presigned URL:", presigned_url)
+        return jsonify({'url': presigned_url})
+
+    except Exception as e:
+        print("S3 upload error:", e)
+        return jsonify({'error': 'Upload failed'}), 500
 
 @app.route('/vessels', methods=['GET'])
 @requires_auth
@@ -63,13 +101,14 @@ def get_vessels():
 @app.route('/generate-pdf', methods=['POST'])
 @requires_auth
 def generate_pdf():
-    
     today_str = datetime.today().strftime('%Y-%m-%d')
-
     user_data = request.json
+
+    print("Received user data:", user_data)  # 🔷 Debug user data
 
     try:
         API_TOKEN = get_pdfgenerator_jwt()
+        print("Generated PDFGeneratorAPI JWT")
     except Exception as e:
         print("Error generating JWT token:", e)
         return jsonify({"error": "Authentication failed"}), 500
@@ -87,6 +126,7 @@ def generate_pdf():
                 "status": user_data.get("status"),
                 "en_manu": user_data.get("en_manu"),
                 "en_mod": user_data.get("en_mod"),
+                "mcr_out": user_data.get("mcr_out"),
                 "sample_per": user_data.get("sample_per"),
                 "on_sample_date": user_data.get("on_sample_date"),
                 "lab_sample_date": user_data.get("lab_sample_date"),
@@ -98,15 +138,24 @@ def generate_pdf():
                 "acc_fac": user_data.get("acc_fac"),
                 "feed_before": user_data.get("feed_before"),
                 "feed_rep": user_data.get("feed_rep"),
-                "data_suggests": user_data.get("data_suggests"),
-                "we_note": user_data.get("we_note"),
-                "we_suggest": user_data.get("we_suggest")
+                "res_bn_obs": user_data.get("res_bn_obs"),
+                "fe_tot_obs": user_data.get("fe_tot_obs"),
+                "feed_obs": user_data.get("feed_obs"),
+                "add_com_obs": user_data.get("add_com_obs"),
+                "we_suggest": user_data.get("we_suggest"),
+                "add_com_sugg": user_data.get("add_com_sugg"),
+                "fe_tbn_image_url": user_data.get("fe_tbn_image_url"),
+                "tbn_fed_image_url": user_data.get("tbn_fed_image_url"),
+                "fe_tot_load_image_url": user_data.get("fe_tot_load_image_url"),
+                "feedrate_load_fe_image_url": user_data.get("feedrate_load_fe_image_url"),
             }
         },
         "format": "pdf",
         "output": "url",
         "name": f"{today_str}_Report_{user_data.get('vessel_name').replace(' ', '_')}"
     }
+
+    print("Payload for PDFGeneratorAPI:", payload)  # 🔷 Debug payload
 
     headers = {
         "Authorization": f"Bearer {API_TOKEN}",
@@ -115,11 +164,11 @@ def generate_pdf():
 
     url = "https://us1.pdfgeneratorapi.com/api/v4/documents/generate"
 
-    response = requests.post(url, headers=headers, json=payload)
-
     try:
+        response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
         result = response.json()
+        print("PDF generated successfully. URL:", result.get("response"))
         return jsonify({"pdfUrl": result.get("response")})
     except Exception as e:
         print("PDFGeneratorAPI error:", e)
@@ -127,7 +176,6 @@ def generate_pdf():
         print("Response text:", response.text)
         return jsonify({"error": "PDF generation failed"}), 500
 
-# ✅ Serve index.html from root for frontend access
 @app.route('/')
 @requires_auth
 def serve_index():
