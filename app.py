@@ -79,6 +79,7 @@ def generate_pdf():
             "id": TEMPLATE_ID,
             "data": {
                 "customer": user_data.get("customer"),
+                "C/Eng": user_data.get("C/Eng"),
                 "vessel_name": user_data.get("vessel_name"),
                 "date": user_data.get("date"),
                 "eng_name": user_data.get("eng_name"),
