@@ -152,7 +152,7 @@ def generate_pdf():
         },
         "format": "pdf",
         "output": "url",
-        "name": f"{today_str}_Report_{user_data.get('vessel_name').replace(' ', '_')}"
+        "name": f"{today_str}_BOB_Feedback_Report_{user_data.get('vessel_name').replace(' ', '_')}"
     }
 
     print("Payload for PDFGeneratorAPI:", payload)  # 🔷 Debug payload
