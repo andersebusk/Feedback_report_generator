@@ -51,8 +51,8 @@
         <datalist id="vessels"></datalist>
     </label>
       <label>Chief Engineer:<input type="text" name="C/Eng" id="C/Eng" /></label>
-      <label>Shipowner:<input type="text" name="customer" id="customer" required /></label>
-      <label>IMO Number:<input type="number" name="imo_no" id="imo_no" required /></label>
+      <label>Shipowner:<input type="text" name="customer" id="customer" /></label>
+      <label>IMO Number:<input type="number" name="imo_no" id="imo_no" /></label>
       <label>Engine Manufacturer:<input type="text" name="en_manu" id="en_manu" /></label>
       <label>Engine Model:<input type="text" name="en_mod" id="en_mod" /></label>
       <label>MCR Output:<input type="number" name="mcr_out" id="mcr_out" /></label>
@@ -133,7 +133,7 @@
           <option value="Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.">Residual BN is slightly below average at around {bn} mgKOH/g, indicating acceptable but reduced BN reserve.</option>
           <option value="Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.">Residual BN is reported at critically low levels despite high Sulphur fuel use, posing a risk of corrosive wear.</option>
         </select>
-        <textarea name="res_bn_obs" id="res_bn_obs" style="min-height: 100px;" required></textarea>
+        <textarea name="res_bn_obs" id="res_bn_obs" style="min-height: 100px;" ></textarea>
       </label>
 
       <label>Fe total observation:
@@ -144,7 +144,7 @@
           <option value="Fe Total levels are slightly below average but remain within the normal operational range.">Fe Total levels are slightly below average but remain within the normal operational range.</option>
           <option value="Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.">Fe Total levels are elevated above normal limits, indicating increased wear and requiring further investigation.</option>
         </select>
-        <textarea name="fe_tot_obs" id="fe_tot_obs" style="min-height: 100px;" required></textarea>
+        <textarea name="fe_tot_obs" id="fe_tot_obs" style="min-height: 100px;" ></textarea>
       </label>
 
       <label>Feedrate observation:
@@ -155,7 +155,7 @@
           <option value="Cylinder oil feedrate is slightly below the target range but remains acceptable.">Cylinder oil feedrate is slightly below the target range but remains acceptable.</option>
           <option value="Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.">Cylinder oil feedrate is high and exceeds recommended values, requiring adjustment to avoid excessive oil consumption.</option>
         </select>
-        <textarea name="feed_obs" id="feed_obs" style="min-height: 100px;" required></textarea>
+        <textarea name="feed_obs" id="feed_obs" style="min-height: 100px;" ></textarea>
       </label>
 
       <label>Additional comment:
@@ -173,7 +173,7 @@
           <option value="If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.">If feedrate is reduced, we recommend implementing incremental reductions of 0.05 g/kWh and conducting onboard scrape-down sampling after each step to verify acceptable wear and BN levels before proceeding further.</option>
           <option value="Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.">Given current wear rates and residual BN levels, suggest evaluating the possibility of reducing cylinder oil feedrate while ensuring all company guidelines are followed.</option>
         </select>
-        <textarea name="we_suggest" id="we_suggest" style="min-height: 100px;" required></textarea>
+        <textarea name="we_suggest" id="we_suggest" style="min-height: 100px;" ></textarea>
       </label>
 
       <label>Additional comments:
